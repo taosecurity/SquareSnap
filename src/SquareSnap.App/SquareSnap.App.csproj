@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>SquareSnap</AssemblyName>
+    <RootNamespace>SquareSnap.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\squaresnap.ico</ApplicationIcon>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Every RID we publish, so the lock file covers them all and a linux publish doesn't swap the win-x64 section (BejView step 4). -->
+    <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>
+    <!-- The release is published single-file, which turns on the single-file analyzer and with it the ILLink package.
+         On always, so a plain restore (CI's locked-mode test restore) and the publish restore agree and the lock file
+         stops flipping (step 6, 2026-11-14, BejView's CI fix cb1c2bb). -->
+    <EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <!-- Native Wayland on Linux (step 4, the user's choice 2026-11-13); X11 stays as the fallback. Does nothing on Windows. -->
+    <PackageReference Include="Avalonia.Wayland" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SquareSnap.Core\SquareSnap.Core.csproj" />
+    <ProjectReference Include="..\SquareSnap.Capture\SquareSnap.Capture.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SquareSnap.Tests" />
+  </ItemGroup>
+
+</Project>

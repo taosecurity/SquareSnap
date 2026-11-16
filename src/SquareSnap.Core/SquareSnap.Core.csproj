@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Platform-neutral logic: square geometry, settings, file naming, logging, command line, WSL paths.
+       No UI and no screen capture here, so all of it is unit-tested on Windows and Linux alike. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>SquareSnap.Core</RootNamespace>
+    <IsTrimmable>true</IsTrimmable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <!-- For PackageIdentity's source-generated import (step 6, as BejView). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Every RID we publish, so the lock file covers them all and a linux publish doesn't swap the win-x64 section (BejView step 4). -->
+    <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SquareSnap.Tests" />
+  </ItemGroup>
+
+</Project>

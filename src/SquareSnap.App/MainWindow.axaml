@@ -1,0 +1,95 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SquareSnap.App.MainWindow"
+        Title="SquareSnap"
+        Width="620" Height="620" MinWidth="420" MinHeight="420"
+        WindowStartupLocation="CenterScreen"
+        Icon="avares://SquareSnap/Assets/squaresnap.ico">
+
+  <DockPanel>
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="_File">
+        <MenuItem Header="_Capture square" InputGesture="Ctrl+N" Click="Capture_Click" />
+        <MenuItem Header="Capture _fixed-size square" Click="CaptureFixed_Click" />
+        <MenuItem x:Name="RepeatMenu" Header="_Repeat last square" InputGesture="Ctrl+R" Click="Repeat_Click" />
+        <Separator />
+        <MenuItem x:Name="SaveMenu" Header="_Save" InputGesture="Ctrl+S" Click="Save_Click" IsEnabled="False" />
+        <MenuItem x:Name="SaveAsMenu" Header="Save _As..." InputGesture="Ctrl+Shift+S" Click="SaveAs_Click" IsEnabled="False" />
+        <MenuItem x:Name="CopyMenu" Header="C_opy" InputGesture="Ctrl+C" Click="Copy_Click" IsEnabled="False" />
+        <Separator />
+        <MenuItem Header="Open save _folder" Click="OpenFolder_Click" />
+        <Separator />
+        <MenuItem Header="E_xit" Click="Exit_Click" />
+      </MenuItem>
+      <MenuItem Header="_Options">
+        <MenuItem x:Name="ClipboardOpt" Header="Copy every capture to the _clipboard" ToggleType="CheckBox" Click="Toggle_Click" />
+        <MenuItem x:Name="AutoSaveOpt" Header="_Save every capture automatically" ToggleType="CheckBox" Click="Toggle_Click" />
+        <MenuItem x:Name="FineTuneOpt" Header="_Fine-tune before capturing (arrow keys, Enter)" ToggleType="CheckBox" Click="Toggle_Click" />
+        <MenuItem x:Name="BorderOpt" Header="Draw a 1-pixel _border (like 1.0)" ToggleType="CheckBox" Click="Toggle_Click" />
+        <Separator />
+        <MenuItem x:Name="SizeMenu" Header="Output si_ze" />
+        <MenuItem x:Name="FormatMenu" Header="File fo_rmat" />
+        <MenuItem x:Name="FixedMenu" Header="Fi_xed-size square" />
+        <MenuItem x:Name="DelayMenu" Header="_Delay" />
+        <MenuItem x:Name="HotkeyMenu" Header="_Hotkey" />
+        <Separator />
+        <MenuItem Header="Save f_older..." Click="SaveFolder_Click" />
+        <MenuItem x:Name="TrayOpt" Header="_Keep running in the tray when closed" ToggleType="CheckBox" Click="Toggle_Click" />
+        <MenuItem x:Name="LightOpt" Header="_Light mode" ToggleType="CheckBox" Click="Toggle_Click" />
+      </MenuItem>
+      <MenuItem Header="_Help">
+        <MenuItem Header="_Read Me (opens GitHub)" Click="ReadMe_Click" />
+        <MenuItem Header="Open the _log file" Click="OpenLog_Click" />
+        <MenuItem Header="Open the _settings folder" Click="OpenSettings_Click" />
+        <Separator />
+        <MenuItem Header="_About SquareSnap" Click="About_Click" />
+      </MenuItem>
+    </Menu>
+
+    <Border DockPanel.Dock="Bottom" Padding="10,6" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+      <DockPanel>
+        <TextBlock x:Name="InfoText" DockPanel.Dock="Right" Margin="12,0,0,0" Opacity="0.8" />
+        <TextBlock x:Name="StatusText" Text="Ready" TextTrimming="CharacterEllipsis" />
+      </DockPanel>
+    </Border>
+
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" Spacing="8">
+      <Button x:Name="CaptureButton" Classes="accent" Content="Capture square" Click="Capture_Click" />
+      <Button Content="Fixed size" Click="CaptureFixed_Click" />
+      <Button x:Name="RepeatButton" Content="Repeat last" Click="Repeat_Click" />
+      <Button x:Name="SaveButton" Content="Save" Click="Save_Click" IsEnabled="False" />
+      <Button x:Name="CopyButton" Content="Copy" Click="Copy_Click" IsEnabled="False" />
+    </StackPanel>
+
+    <Border Margin="10,0,10,10" BorderThickness="1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+      <Grid>
+        <TextBlock x:Name="EmptyText" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Opacity="0.7"
+                   Text="Click Capture square, then drag a square anywhere on any monitor." TextWrapping="Wrap" MaxWidth="320" />
+        <Image x:Name="PreviewImage" Stretch="Uniform" StretchDirection="DownOnly" />
+
+        <!-- "Saved to" banner: shown after every save, fades after a few seconds. -->
+        <Border x:Name="SavedBanner" IsVisible="False" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                Margin="10" Padding="12,8" CornerRadius="6"
+                Background="#E61E7A46" BorderBrush="#FF2EA868" BorderThickness="1">
+          <Border.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.4" />
+            </Transitions>
+          </Border.Transitions>
+          <DockPanel>
+            <Button x:Name="SavedClose" DockPanel.Dock="Right" Content="✕" Padding="8,2" Margin="6,0,0,0"
+                    VerticalAlignment="Center" Background="Transparent" Foreground="White" Click="SavedClose_Click"
+                    ToolTip.Tip="Hide" />
+            <Button x:Name="SavedOpen" DockPanel.Dock="Right" Content="Open folder" Padding="10,3" Margin="10,0,0,0"
+                    VerticalAlignment="Center" Click="SavedOpen_Click"
+                    Foreground="White" Background="#33FFFFFF" BorderBrush="#80FFFFFF" BorderThickness="1" />
+            <StackPanel VerticalAlignment="Center">
+              <TextBlock x:Name="SavedTitle" Foreground="White" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+              <TextBlock x:Name="SavedFile" Foreground="White" Opacity="0.85" FontSize="12" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+          </DockPanel>
+        </Border>
+      </Grid>
+    </Border>
+  </DockPanel>
+</Window>

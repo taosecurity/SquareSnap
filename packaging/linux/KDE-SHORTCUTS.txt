@@ -1,0 +1,48 @@
+SquareSnap's hotkey on KDE Plasma
+=================================
+
+KDE Plasma (on Wayland) doesn't let a program grab a key for itself. SquareSnap has to ask
+Plasma, and Plasma asks you. This is how it works, and what to do.
+
+1. Install first. Plasma gives hotkeys only to programs in its app menu. In SquareSnap's folder:
+     ./install.sh
+   Then start SquareSnap from the app menu (or type: squaresnap). If you start ./squaresnap
+   from the unpacked folder before installing, the status bar says to run install.sh, and
+   SquareSnap doesn't ask for a hotkey.
+
+2. Accept Plasma's dialog. The first time an installed SquareSnap starts, Plasma shows a
+   dialog asking whether SquareSnap may use a shortcut (Ctrl+Alt+S unless you picked another
+   one in Options > Hotkey). Accept it as it is: don't press a key in the dialog, or Plasma
+   adds that key too (Print, for example, which Spectacle already uses). SquareSnap asks at
+   every start, because Plasma only switches the shortcut on when the app asks. Current Plasma
+   remembers your answer and shows no dialog after the first time; older Plasma (Debian 13's)
+   shows it at every start: accept it each time. The status bar names the key Plasma set
+   ("Ready. Hotkey: Ctrl+Alt+S").
+
+3. Change the keys in System Settings > Keyboard > Shortcuts. Look for SquareSnap in the
+   list; its one shortcut is "Capture a square screenshot". Plasma's choice there wins over
+   the one in SquareSnap's Options menu.
+
+4. The hotkey works while SquareSnap runs (in the window or the tray). To capture with a key
+   without SquareSnap running, add your own command shortcut instead:
+   System Settings > Keyboard > Shortcuts > Add New > Command or Script, command:
+     squaresnap capture
+   and pick a key that SquareSnap's own shortcut doesn't use.
+
+5. Two SquareSnap entries in Shortcuts or the launcher? An early 2.0 beta could leave a second,
+   unnamed one when it was started before install.sh. Remove the extra entry in System Settings >
+   Keyboard > Shortcuts (select it, then the Remove button), keep the one named SquareSnap,
+   and restart SquareSnap.
+
+6. Status bar says the shortcut has no key set? Plasma remembers SquareSnap's shortcut even
+   after you remove its key or uninstall SquareSnap, and it doesn't show the dialog again for
+   a shortcut it knows. Either set a key in System Settings > Keyboard > Shortcuts > SquareSnap
+   (tick the default Ctrl+Alt+S, then Apply), or start fresh: quit SquareSnap, run
+     kwriteconfig6 --file kglobalshortcutsrc --group squaresnap --key capture --delete
+     kwriteconfig6 --file kglobalshortcutsrc --group squaresnap --key _k_friendly_name --delete
+   log out and back in, and start SquareSnap: the dialog comes back.
+
+If the hotkey still does nothing, start SquareSnap from a terminal with --verbose and send the
+lines starting "Portal:" and "Hotkey:" (also in ~/.config/SquareSnap/squaresnap.log).
+GNOME (48 and later) asks in a similar way; other desktops may not offer the shortcut portal at
+all: then use the command shortcut in step 4.

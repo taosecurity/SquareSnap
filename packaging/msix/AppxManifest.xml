@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SquareSnap's Microsoft Store (MSIX) manifest (step 6, 2026-11-14, from BejView's step 5). A template:
+  tools\make_msix.py fills the {{...}} values from packaging\store-identity.json and Directory.Build.props.
+  File-system write virtualization stays at Windows' default (the user's decision, 2026-11-13, following Microsoft:
+  turning it off is meant only for certain games). New files under %APPDATA% go to the package's private copy, which
+  uninstall removes; files that already exist there (1.0's settings.json, a zip build's log) are changed in place
+  (Windows 10 1903 and later). SquareSnap shows and opens wherever each file really is (AppPaths.RealLocation).
+  Captures go to Pictures\SquareSnap (or the folder the user picks), which is outside AppData and never redirected.
+  One application (the certification kit's "Application count" test wants one): the window, SquareSnap.exe, in the
+  Start menu. Its app execution alias "squaresnap" names the terminal helper (SquareSnap.Launcher.exe, the same helper
+  as SquareSnap.com in the zip) as a console program, so terminals wait for capture, paths, help and version.
+  Screen capture (GDI BitBlt), the global hotkey (RegisterHotKey) and the tray icon need no capability beyond
+  runFullTrust. The Store build has no self-update: the Store updates it.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap uap5 desktop4 rescap">
+
+  <Identity Name="{{IdentityName}}" Publisher="{{Publisher}}" Version="{{Version}}" ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>SquareSnap</DisplayName>
+    <PublisherDisplayName>{{PublisherDisplayName}}</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Square (1:1) screenshots: drag a square on any monitor, and it's copied and saved.</Description>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <!-- A console alias needs SupportsMultipleInstances on its application (makeappx refuses it otherwise): every terminal
+         gets its own helper. -->
+    <Application Id="SquareSnap" Executable="SquareSnap.exe" EntryPoint="Windows.FullTrustApplication"
+      desktop4:SupportsMultipleInstances="true">
+      <uap:VisualElements DisplayName="SquareSnap" Description="Square (1:1) screenshots"
+        BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <!-- "squaresnap" in any terminal runs the helper (its own Executable on the extension; the schema lets an
+             extension name another exe than its application's; proven at runtime by BejView beta 11). -->
+        <uap5:Extension Category="windows.appExecutionAlias" Executable="SquareSnap.Launcher.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console">
+            <uap5:ExecutionAlias Alias="squaresnap.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

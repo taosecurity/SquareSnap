@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    SquareSnap.com: the terminal helper. SquareSnap.exe is a windowed program, so terminals don't wait for it and its
+    text lands after the prompt. Typing "SquareSnap" (no extension) runs this console program instead, because Windows
+    tries .com before .exe; it runs SquareSnap.exe next to it with the same arguments, waits, and returns its exit code.
+    Published with Native AOT so it stays small; the release script renames SquareSnap.Launcher.exe to SquareSnap.com.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>SquareSnap.Launcher</AssemblyName>
+    <RootNamespace>SquareSnap.Launcher</RootNamespace>
+    <PublishAot>true</PublishAot>
+    <OptimizationPreference>Size</OptimizationPreference>
+    <StackTraceSupport>false</StackTraceSupport>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationIcon>..\SquareSnap.App\Assets\squaresnap.ico</ApplicationIcon>
+    <!-- PerMonitorV2, for the Windows App Certification Kit's DPI check (step 6, as BejView beta 11). -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- Native AOT picks the build machine's own runtime when none is given, so the lock file would differ between
+         Windows and Linux and CI's locked restore would fail (BejView's first CI run). Listing both keeps one lock file. -->
+    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SquareSnap.Tests" />
+  </ItemGroup>
+
+</Project>

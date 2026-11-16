@@ -158,3 +158,18 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# SquareSnap 2.0 release staging
+dist/
+
+# Python bytecode (tools\make_msix.py imports make_icon.py)
+__pycache__/
+
+# Private working files: tracked on the local v2 branch only, never in the public main (step 7, 2026-11-16)
+NOTES.md
+PLAN.md
+STEP*-PROMPT.md
+testplan/
+beta/
+release-notes-*.md
+store-listing-*.md

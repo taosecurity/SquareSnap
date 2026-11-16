@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Name=SquareSnap
+GenericName=Square Screenshot
+Comment=Take square (1:1) screenshots
+Exec=squaresnap
+Icon=squaresnap
+Terminal=false
+Categories=Graphics;Utility;
+Keywords=screenshot;capture;square;snip;
+StartupWMClass=SquareSnap
+Actions=Capture;
+
+[Desktop Action Capture]
+Name=Capture a square
+Exec=squaresnap capture

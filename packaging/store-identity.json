@@ -1,0 +1,11 @@
+{
+  "_comment": "Microsoft Store identity for SquareSnap, from Partner Center > SquareSnap > Product identity (screenshot 2026-11-11 10:20). Used by the MSIX manifest in step 6. Not secret: these values are public in every Store package.",
+  "IdentityName": "RichardBejtlich.SquareSnap",
+  "Publisher": "CN=58B8B65E-31C5-4B4D-8321-9980C783395B",
+  "PublisherDisplayName": "Richard Bejtlich",
+  "PackageFamilyName": "RichardBejtlich.SquareSnap_kz4qzpv342p6y",
+  "StoreId": "9P7RXW6FNH5D",
+  "ReservedName": "SquareSnap",
+  "ProductType": "MSIX or PWA app",
+  "Recorded": "2026-11-11"
+}

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SquareSnap.App/SquareSnap.App.csproj" />
+    <Project Path="src/SquareSnap.Capture/SquareSnap.Capture.csproj" />
+    <Project Path="src/SquareSnap.Core/SquareSnap.Core.csproj" />
+    <Project Path="src/SquareSnap.Launcher/SquareSnap.Launcher.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SquareSnap.Tests/SquareSnap.Tests.csproj" />
+  </Folder>
+</Solution>

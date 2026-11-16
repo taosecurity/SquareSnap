@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <!-- xUnit v3 test projects are executables. -->
+    <OutputType>Exe</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <!-- Runs the real overlay controls with no screen (works in CI and in Windows session 0). -->
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SquareSnap.Core\SquareSnap.Core.csproj" />
+    <ProjectReference Include="..\..\src\SquareSnap.Capture\SquareSnap.Capture.csproj" />
+    <ProjectReference Include="..\..\src\SquareSnap.App\SquareSnap.App.csproj" />
+    <ProjectReference Include="..\..\src\SquareSnap.Launcher\SquareSnap.Launcher.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

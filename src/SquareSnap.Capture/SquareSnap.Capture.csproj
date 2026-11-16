@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Screen capture, clipboard, hotkeys and image encoding: the parts that differ per platform.
+       Windows code uses P/Invoke and only runs when OperatingSystem.IsWindows() is true. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>SquareSnap.Capture</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsTrimmable>true</IsTrimmable>
+    <!-- Every RID we publish, so the lock file covers them all and a linux publish doesn't swap the win-x64 section (BejView step 4). -->
+    <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Same SkiaSharp that Avalonia 12.1.4 uses, so only one copy ships. -->
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+    <!-- D-Bus for the Linux screenshot and GlobalShortcuts portals; the same version Avalonia.FreeDesktop 12.1.4 uses. -->
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.94.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SquareSnap.Core\SquareSnap.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SquareSnap.Tests" />
+  </ItemGroup>
+
+</Project>
