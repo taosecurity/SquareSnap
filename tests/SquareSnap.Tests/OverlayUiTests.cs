@@ -91,6 +91,25 @@ public class OverlayUiTests
     }
 
     [AvaloniaFact]
+    public void AltF4Cancels()
+    {
+        // 2.0.2: the overlay handles every key, so Windows never closed it on Alt+F4 (the user's test of 2.0.1).
+        var (w, c, finished) = Open(OverlayMode.Drag, fineTune: false);
+        w.KeyPress(Key.F4, RawInputModifiers.Alt, PhysicalKey.F4, null);
+        Assert.Equal(OverlayState.Cancelled, c.State);
+        Assert.Equal(1, finished());
+    }
+
+    [AvaloniaFact]
+    public void F4WithoutAltDoesNotCancel()
+    {
+        var (w, c, finished) = Open(OverlayMode.Drag, fineTune: false);
+        w.KeyPress(Key.F4, RawInputModifiers.None, PhysicalKey.F4, null);
+        Assert.NotEqual(OverlayState.Cancelled, c.State);
+        Assert.Equal(0, finished());
+    }
+
+    [AvaloniaFact]
     public void Rendering_ShowsTheScreenOneToOneInsideTheSquare()
     {
         var shot = ImagingTests.Pattern(Screen.Bounds);
@@ -134,7 +153,7 @@ public class OverlayUiTests
         var w = new MainWindow(s);
         w.Show();
 
-        Assert.StartsWith("SquareSnap 2.0.1", w.Title);
+        Assert.StartsWith("SquareSnap 2.0.2", w.Title);
         var size = w.FindControl<MenuItem>("SizeMenu")!;
         var items = ((IEnumerable<object>)size.ItemsSource!).Cast<MenuItem>().ToList();
         Assert.Equal(OutputSize.Presets.Count, items.Count);

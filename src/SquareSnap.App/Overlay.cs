@@ -385,6 +385,8 @@ internal sealed class SelectionSurface : Control, IDisposable
             Key.Down => OverlayKey.Down,
             Key.Enter or Key.Space => OverlayKey.Enter,
             Key.Escape => OverlayKey.Escape,
+            // Every key is marked handled below, so Windows never sees Alt+F4: make it cancel, as Escape does (2.0.2).
+            Key.F4 when e.KeyModifiers.HasFlag(KeyModifiers.Alt) => OverlayKey.Escape,
             _ => OverlayKey.Other,
         };
         _c.Key(key, e.KeyModifiers.HasFlag(KeyModifiers.Shift), e.KeyModifiers.HasFlag(KeyModifiers.Control));

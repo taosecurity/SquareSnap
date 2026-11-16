@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2 (2026-11-16)
+
+- Alt+F4 on the capture overlay cancels the capture, as Escape does. Before, the overlay ignored it.
+
 ## 2.0.1 (2026-11-16)
 
 Bug fixes from a code review of the 2.0.0 source.

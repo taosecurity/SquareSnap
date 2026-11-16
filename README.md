@@ -8,7 +8,7 @@ For AI assistants: see [AGENTS.md](AGENTS.md).
 
 ## Try it
 
-Windows: download `SquareSnap-2.0.1-win-x64.zip` from [Releases](https://github.com/taosecurity/SquareSnap/releases), extract it anywhere, and double-click `SquareSnap.exe`. Click **Capture square**, drag a square, and paste it anywhere with Ctrl+V. Or, from PowerShell in that folder:
+Windows: download `SquareSnap-2.0.2-win-x64.zip` from [Releases](https://github.com/taosecurity/SquareSnap/releases), extract it anywhere, and double-click `SquareSnap.exe`. Click **Capture square**, drag a square, and paste it anywhere with Ctrl+V. Or, from PowerShell in that folder:
 
 ```powershell
 .\SquareSnap --version
@@ -18,8 +18,8 @@ Windows: download `SquareSnap-2.0.1-win-x64.zip` from [Releases](https://github.
 Linux:
 
 ```sh
-tar -xzf SquareSnap-2.0.1-linux-x64.tar.gz
-cd SquareSnap-2.0.1-linux-x64
+tar -xzf SquareSnap-2.0.2-linux-x64.tar.gz
+cd SquareSnap-2.0.2-linux-x64
 ./squaresnap --version
 ./install.sh          # adds it to your app menu (into ~/.local, no sudo); needed for the hotkey on Plasma
 ./squaresnap
@@ -56,10 +56,10 @@ Every release lists SHA-256 hashes in `SHA256SUMS` and carries a GitHub build at
 
 ```sh
 sha256sum -c SHA256SUMS --ignore-missing         # Linux
-gh attestation verify SquareSnap-2.0.1-linux-x64.tar.gz -R taosecurity/SquareSnap
+gh attestation verify SquareSnap-2.0.2-linux-x64.tar.gz -R taosecurity/SquareSnap
 ```
 
-On Windows, compare `Get-FileHash SquareSnap-2.0.1-win-x64.zip` with the line in `SHA256SUMS`.
+On Windows, compare `Get-FileHash SquareSnap-2.0.2-win-x64.zip` with the line in `SHA256SUMS`.
 
 SquareSnap 2.0 replaces SquareSnap 1.0 (Windows) and BejSnap 1.0 (Linux). The first time it starts, it takes over 1.0's save folder (and on Linux BejSnap's save folder and theme).
 
