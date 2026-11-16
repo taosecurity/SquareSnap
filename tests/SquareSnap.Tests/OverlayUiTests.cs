@@ -134,7 +134,7 @@ public class OverlayUiTests
         var w = new MainWindow(s);
         w.Show();
 
-        Assert.StartsWith("SquareSnap 2.0.0", w.Title);
+        Assert.StartsWith("SquareSnap 2.0.1", w.Title);
         var size = w.FindControl<MenuItem>("SizeMenu")!;
         var items = ((IEnumerable<object>)size.ItemsSource!).Cast<MenuItem>().ToList();
         Assert.Equal(OutputSize.Presets.Count, items.Count);

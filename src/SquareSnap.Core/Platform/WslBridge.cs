@@ -93,7 +93,7 @@ public static class WslBridge
         var a = new List<string>();
         if (o.Command == Command.Capture) a.Add("capture");
         if (o.Size is { } size) { a.Add("--size"); a.Add(size.ToString()); }
-        if (o.OutFolder != null) { a.Add("--out"); a.Add(toWindowsPath(Absolute(o.OutFolder, env))); }
+        if (o.OutFolder != null) { a.Add("--out"); a.Add(ForWindows(o.OutFolder, env, toWindowsPath)); }
         if (o.NameTemplate != null) { a.Add("--name"); a.Add(o.NameTemplate); }
         if (o.Format is { } f) { a.Add("--format"); a.Add(f.Extension().TrimStart('.')); }
         if (o.Clipboard is bool clip) a.Add(clip ? "--clipboard" : "--no-clipboard");
@@ -103,7 +103,7 @@ public static class WslBridge
         if (o.Region is { } r) { a.Add("--region"); a.Add(r.ToString()); }
         if (o.FineTune is bool ft) a.Add(ft ? "--fine-tune" : "--no-fine-tune");
         if (o.Verbose) a.Add("--verbose");
-        if (o.LogFile != null) { a.Add("--log"); a.Add(toWindowsPath(Absolute(o.LogFile, env))); }
+        if (o.LogFile != null) { a.Add("--log"); a.Add(ForWindows(o.LogFile, env, toWindowsPath)); }
         return a;
     }
 
@@ -130,14 +130,9 @@ public static class WslBridge
         string? configured = env(ExeEnvironmentVariable);
         if (!string.IsNullOrWhiteSpace(configured))
         {
-            string p = configured.Trim().Trim('"');
-            if (!p.StartsWith('/'))
-            {
-                try { p = Wsl.ToLinuxPath(p, mountRoot); }
-                catch (ArgumentException) { return (null, null); }
-            }
             // A configured path that doesn't exist isn't silently replaced by a search: that would hide the typo.
-            return fileExists(p) ? (p, $"in ${ExeEnvironmentVariable}") : (null, null);
+            var (p, problem) = CheckConfigured(configured, fileExists, mountRoot);
+            return problem == null ? (p, $"in ${ExeEnvironmentVariable}") : (null, null);
         }
 
         if (!string.IsNullOrEmpty(ownDirectory))
@@ -159,17 +154,29 @@ public static class WslBridge
     public static string? ConfiguredExeProblem(Func<string, string?> env, Func<string, bool> fileExists, string mountRoot)
     {
         string? configured = env(ExeEnvironmentVariable);
-        if (string.IsNullOrWhiteSpace(configured)) return null;
+        return string.IsNullOrWhiteSpace(configured) ? null : CheckConfigured(configured, fileExists, mountRoot).Problem;
+    }
+
+    /// <summary>$SQUARESNAP_WINDOWS_EXE read once, for both <see cref="FindWindowsExe"/> and
+    /// <see cref="ConfiguredExeProblem"/>: the Linux path, or why it can't be used.</summary>
+    private static (string? Path, string? Problem) CheckConfigured(string configured, Func<string, bool> fileExists, string mountRoot)
+    {
         string p = configured.Trim().Trim('"');
         if (!p.StartsWith('/'))
         {
             try { p = Wsl.ToLinuxPath(p, mountRoot); }
-            catch (ArgumentException) { return $"${ExeEnvironmentVariable} is '{configured}', which isn't a full Linux or Windows path."; }
+            catch (ArgumentException) { return (null, $"${ExeEnvironmentVariable} is '{configured}', which isn't a full Linux or Windows path."); }
         }
-        return fileExists(p) ? null : $"${ExeEnvironmentVariable} is '{configured}', but {p} doesn't exist.";
+        return fileExists(p) ? (p, null) : (null, $"${ExeEnvironmentVariable} is '{configured}', but {p} doesn't exist.");
     }
 
     private static BridgeDecision Here(string reason) => new(BridgeAction.RunHere, reason);
+
+    /// <summary>A path for SquareSnap.exe: a Windows path (C:\x, \\server\share) is passed on as given; a Linux
+    /// path is made absolute and turned into a Windows one. Before 2.0.1 a Windows path was joined onto the Linux
+    /// working folder.</summary>
+    private static string ForWindows(string path, BridgeEnvironment env, Func<string, string> toWindowsPath) =>
+        Wsl.LooksLikeWindowsPath(path) ? path : toWindowsPath(Absolute(path, env));
 
     private static string Absolute(string path, BridgeEnvironment env)
     {

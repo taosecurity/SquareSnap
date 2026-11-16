@@ -58,6 +58,15 @@ internal static class Overlay
         {
             foreach (var display in layout.Monitors) windows.Add(Make(display));
         }
+        // An overlay closed by anything but Finish (Alt+F4, the compositor or window manager) ends the pick as
+        // cancelled and closes the others; before 2.0.1 the pick never finished and SquareSnap stayed busy.
+        foreach (var w in windows)
+            w.Closed += (_, _) =>
+            {
+                if (!done.TrySetResult(null)) return;
+                s.Log.Info("An overlay window was closed from outside SquareSnap (Alt+F4 or the window manager); capture cancelled.");
+                foreach (var other in windows) if (other != w) other.Close();
+            };
         foreach (var w in windows) w.Show();
 
         // Start on the monitor under the mouse so the keyboard works there straight away.

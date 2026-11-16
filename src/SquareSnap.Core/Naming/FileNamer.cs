@@ -10,7 +10,7 @@ namespace SquareSnap.Core.Naming;
 /// <item><c>{date}</c>: yyyyMMdd</item>
 /// <item><c>{time}</c>: HHmmss</item>
 /// <item><c>{size}</c>: side length in pixels of the saved image</item>
-/// <item><c>{n}</c> or <c>{n:000}</c>: a counter that starts at 1 each day (zero-padded to as many digits as there are zeros)</item>
+/// <item><c>{n}</c> or <c>{n:000}</c>: a counter, one more than the highest number already used by matching files (zero-padded to as many digits as there are zeros). With <c>{date}</c> in the template that means it starts at 1 each day; without it the counter carries on, so a new day never reuses an old name.</item>
 /// </list>
 /// The counter is worked out from the files already in the folder, so it resets daily, never repeats a name,
 /// and needs no stored state.

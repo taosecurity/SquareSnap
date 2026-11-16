@@ -44,8 +44,18 @@ internal static class Output
         // CreateNew: if another SquareSnap grabbed the same name a moment ago, take the next one.
         for (int attempt = 0; attempt < 5; attempt++)
         {
-            string name = FileNamer.NextName(o.Template, DateTime.Now, o.Size.SideFor(image.Width), o.Format,
-                Directory.EnumerateFiles(o.Folder).Select(Path.GetFileName).OfType<string>());
+            List<string> existing;
+            try
+            {
+                existing = Directory.EnumerateFiles(o.Folder).Select(Path.GetFileName).OfType<string>().ToList();
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // A network folder that dropped, or one we may write to but not list: the save-folder message, not a crash.
+                s.Log.Error($"Can't list the save folder {o.Folder}", ex);
+                return (null, $"Can't read the save folder {o.Folder} ({ex.Message}). Pick another folder in Options, or with --out.");
+            }
+            string name = FileNamer.NextName(o.Template, DateTime.Now, o.Size.SideFor(image.Width), o.Format, existing);
             string path = Path.Combine(o.Folder, name);
             try
             {
@@ -87,11 +97,13 @@ internal static class Output
     }
 
     /// <summary>Copies the final image (resized and bordered as set) to the clipboard.</summary>
-    public static bool Copy(AppSession s, ScreenImage image, OutputOptions o)
+    /// <summary>Copies the capture to the clipboard. <paramref name="rendered"/>: the same image already resized and
+    /// bordered for these options (the window's preview), so it isn't rendered a second time.</summary>
+    public static bool Copy(AppSession s, ScreenImage image, OutputOptions o, ScreenImage? rendered = null)
     {
         try
         {
-            var final = ImageEncoder.Render(image, o.Size, o.Border);
+            var final = rendered ?? ImageEncoder.Render(image, o.Size, o.Border);
             return s.Clipboard.SetImage(final, ImageEncoder.EncodePngPlain(final));
         }
         catch (Exception ex)

@@ -93,7 +93,7 @@ public sealed class Logger : IDisposable
             string? dir = Path.GetDirectoryName(Path.GetFullPath(path));
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
             TrimIfLarge(path);
-            var stream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            var stream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);   // Delete: another run may move it aside
             _file = new StreamWriter(stream, new UTF8Encoding(false)) { AutoFlush = true };
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException or ArgumentException)
@@ -104,13 +104,25 @@ public sealed class Logger : IDisposable
         }
     }
 
-    /// <summary>Keeps the newest half of a log that has grown past <see cref="MaxBytes"/>.</summary>
+    /// <summary>
+    /// A log that has grown past <see cref="MaxBytes"/> is moved aside to <c>&lt;name&gt;.1</c> (replacing an older one)
+    /// and a new one is started. Rewriting the file in place, as before 2.0.1, broke another running SquareSnap that
+    /// held it open: on Windows the rewrite failed and the new run wrote no log; on Linux the other run kept writing at
+    /// its old offset, leaving NUL bytes. A rename leaves the other run's handle on the old file, which is harmless.
+    /// When the move fails (Windows: the other run holds the file without delete sharing), the log just keeps growing
+    /// until the next start.
+    /// </summary>
     internal static void TrimIfLarge(string path)
     {
         var info = new FileInfo(path);
         if (!info.Exists || info.Length <= MaxBytes) return;
-        string text = File.ReadAllText(path);
-        int cut = text.IndexOf('\n', text.Length / 2);
-        File.WriteAllText(path, "(older lines removed)" + Environment.NewLine + (cut >= 0 ? text[(cut + 1)..] : ""));
+        try
+        {
+            File.Move(path, path + ".1", overwrite: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // another SquareSnap has it open; try again at the next start
+        }
     }
 }

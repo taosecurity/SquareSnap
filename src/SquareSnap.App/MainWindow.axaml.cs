@@ -123,11 +123,18 @@ public partial class MainWindow : Window
         return CaptureAsync(OverlayMode.Drag, last);
     }
 
+    private (ScreenImage Image, OutputSize Size, bool Border)? _rendered;
+
+    /// <summary>The preview's rendered image when it was made with these options, else null.</summary>
+    private ScreenImage? RenderedFor(OutputOptions o) =>
+        _rendered is { } r && r.Size == o.Size && r.Border == o.Border ? r.Image : null;
+
     private void SetCapture(ScreenImage image)
     {
         _capture = image;
         var o = OutputOptions.FromSettings(_s);
         var final = ImageEncoder.Render(image, o.Size, o.Border);
+        _rendered = (final, o.Size, o.Border);   // the clipboard copy reuses it while the options stay the same
         _preview?.Dispose();
         _preview = Overlay.ToBitmap(final);
         PreviewImage.Source = _preview;
@@ -144,7 +151,8 @@ public partial class MainWindow : Window
         bool failed = false;
         if (_s.Settings.CopyToClipboard)
         {
-            if (Output.Copy(_s, _capture!, OutputOptions.FromSettings(_s))) parts.Add("copied to the clipboard");
+            var co = OutputOptions.FromSettings(_s);
+            if (Output.Copy(_s, _capture!, co, RenderedFor(co))) parts.Add("copied to the clipboard");
             else { parts.Add("copying failed (see the log)"); failed = true; }
         }
         if (_s.Settings.AutoSave)
@@ -241,11 +249,19 @@ public partial class MainWindow : Window
         var o = OutputOptions.FromSettings(_s);
         IStorageFolder? start = null;
         try { start = await StorageProvider.TryGetFolderFromPathAsync(o.Folder); } catch (Exception) { /* folder may not exist yet */ }
+        List<string> existing = [];
+        try
+        {
+            if (Directory.Exists(o.Folder)) existing = Directory.EnumerateFiles(o.Folder).Select(Path.GetFileName).OfType<string>().ToList();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            _s.Log.Warning($"Can't list the save folder {o.Folder} for the suggested name ({ex.Message}).");
+        }
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = "Save capture as",
-            SuggestedFileName = FileNamer.NextName(o.Template, DateTime.Now, o.Size.SideFor(_capture.Width), o.Format,
-                Directory.Exists(o.Folder) ? Directory.EnumerateFiles(o.Folder).Select(Path.GetFileName).OfType<string>() : []),
+            SuggestedFileName = FileNamer.NextName(o.Template, DateTime.Now, o.Size.SideFor(_capture.Width), o.Format, existing),
             SuggestedStartLocation = start,
             DefaultExtension = o.Format.Extension().TrimStart('.'),
             FileTypeChoices =
@@ -265,7 +281,8 @@ public partial class MainWindow : Window
     private void Copy()
     {
         if (_capture == null) return;
-        bool ok = Output.Copy(_s, _capture, OutputOptions.FromSettings(_s));
+        var co = OutputOptions.FromSettings(_s);
+        bool ok = Output.Copy(_s, _capture, co, RenderedFor(co));
         SetStatus(ok ? "Copied to the clipboard." : "Copying failed (see Help > Open the log file).", !ok);
     }
 

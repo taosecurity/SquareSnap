@@ -112,7 +112,7 @@ switch ($Step) {
         Say '      (a zip copy of SquareSnap.com earlier on PATH would win over the alias; the line above shows which ran)'
 
         $v = & squaresnap --version
-        Say "$(Mark ($LASTEXITCODE -eq 0 -and "$v" -like 'SquareSnap 2.0.0*'))  squaresnap --version -> '$v' (exit $LASTEXITCODE)"
+        Say "$(Mark ($LASTEXITCODE -eq 0 -and "$v" -like 'SquareSnap 2.0.1*'))  squaresnap --version -> '$v' (exit $LASTEXITCODE)"
 
         # Waits like .\SquareSnap: the whole help arrives before the next line runs, and the exit code comes back.
         $help = & squaresnap --help

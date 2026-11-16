@@ -220,7 +220,7 @@ public static class CommandLine
           --size N|native     save at N x N pixels (16-16384), or at the captured size
           --out DIR           save into DIR (created if missing)
           --name TEMPLATE     file name template: {date} {time} {size} {n:000}
-                              (default SquareCap-{date}-{n:000}; the counter restarts each day)
+                              (default SquareCap-{date}-{n:000}; with {date} in it, the counter restarts each day)
           --format png|jpg|webp
           --clipboard / --no-clipboard   copy the capture to the clipboard, or don't
           --delay S           wait S seconds (0-60) before freezing the screen

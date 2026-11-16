@@ -22,7 +22,33 @@ internal sealed class AppSession(CliOptions options, Logger log, SettingsStore s
     /// <summary>A window whose Screens list the monitors (Linux capture fits them onto the screenshot); set when the UI starts.</summary>
     public TopLevel? ScreensSource { get; set; }
 
-    public void SaveSettings() => Store.Save(Settings);
+    // The tray and a `squaresnap capture` run each hold their own copy of the settings. LastRegion is the one value
+    // both write, so each save first takes the file's LastRegion when another run changed it since we last looked;
+    // before 2.0.1 the tray wrote its old copy back and --last repeated the wrong square.
+    private string? _knownLastRegion = settings.LastRegion;
+
+    public void SaveSettings()
+    {
+        string? onDisk = Store.PeekLastRegion();
+        if (onDisk != _knownLastRegion && Settings.LastRegion == _knownLastRegion)
+        {
+            Log.Debug($"Another SquareSnap saved LastRegion {onDisk}; keeping it.");
+            Settings.LastRegion = onDisk;
+        }
+        Store.Save(Settings);
+        _knownLastRegion = Settings.LastRegion;
+    }
+
+    /// <summary>Records the square just captured. Only LastRegion changes in the file: the other settings on disk stay
+    /// as they are, so a capture run never puts back options the tray changed meanwhile.</summary>
+    public void SaveLastRegion(string region)
+    {
+        Settings.LastRegion = region;
+        var onDisk = Store.Load();   // the file as it is now, with whatever the other run saved
+        onDisk.LastRegion = region;
+        Store.Save(onDisk);
+        _knownLastRegion = region;
+    }
 
     /// <summary>The monitors as Avalonia reports them, for the Linux capture. Empty on Windows, which asks the system itself.</summary>
     public IReadOnlyList<ScreenInfo> CurrentScreens()

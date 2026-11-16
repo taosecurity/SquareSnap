@@ -63,8 +63,7 @@ internal static class CaptureFlow
 
         var image = screen.Crop(square);
         log.Info($"Captured square {square} ({square.Width}x{square.Height}) on {layout.MonitorAt(square.Center).Name}.");
-        s.Settings.LastRegion = square.ToString();
-        s.SaveSettings();
+        s.SaveLastRegion(square.ToString());
         return new CaptureOutcome(image, null);
     }
 }

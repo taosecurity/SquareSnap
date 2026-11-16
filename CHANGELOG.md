@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.0.1 (2026-11-16)
+
+Bug fixes from a code review of the 2.0.0 source.
+
+- Closing the capture overlay with Alt+F4 (or by the window manager) cancels the capture. Before, SquareSnap stayed busy and ignored every later capture until it was restarted, and `squaresnap capture` never exited.
+- A hotkey of `F` or `Shift+F` is refused (it would fire on every capital F); F1-F24 alone still work.
+- Under WSL, a Windows path for `--out` or `--log` (such as `C:\Users\me\Pictures`) is passed on as given instead of being joined onto the Linux folder.
+- Two SquareSnaps (the tray and a `squaresnap capture`) no longer overwrite each other's settings: a capture run changes only the last square, and the tray keeps a newer last square saved by the other run.
+- A log over 1 MB is moved aside to `squaresnap.log.1` instead of being rewritten, which broke the log of another running SquareSnap.
+- A read-only settings folder holding an old or damaged settings.json no longer stops SquareSnap from starting.
+- A save folder that can't be listed (a dropped network share) gives the save-folder message instead of "Capture failed".
+- Each capture is resized once for the preview and the clipboard, not twice.
+- The help now says the `{n}` counter restarts each day when the template has `{date}` (as the default does).
+
 ## 2.0.0 (2026-11-16)
 
 A rewrite of SquareSnap on .NET 10 and Avalonia, for Windows and Linux. It replaces SquareSnap 1.0 (Windows) and BejSnap 1.0 (Linux), and takes over their save folder the first time it starts.

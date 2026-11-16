@@ -55,6 +55,22 @@ public sealed class SettingsStore(AppPaths paths, Logger log)
         }
     }
 
+    /// <summary>The LastRegion in the settings file as it is now (another SquareSnap may have saved one since this
+    /// run loaded its settings), or null when the file is missing or unreadable. Quiet: logs nothing.</summary>
+    public string? PeekLastRegion()
+    {
+        try
+        {
+            string file = Paths.SettingsFile;
+            if (!File.Exists(file)) return null;
+            return JsonSerializer.Deserialize(File.ReadAllText(file), SettingsJsonContext.Default.AppSettings)?.LastRegion;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or NotSupportedException)
+        {
+            return null;
+        }
+    }
+
     /// <summary>The folder captures go to: the saved choice, or Pictures/SquareSnap.</summary>
     public string SaveFolderFor(AppSettings s) =>
         string.IsNullOrWhiteSpace(s.SaveFolder) ? Paths.DefaultSaveFolder : s.SaveFolder;
@@ -92,7 +108,8 @@ public sealed class SettingsStore(AppPaths paths, Logger log)
         catch (JsonException ex)
         {
             string bad = file + ".bad";
-            try { File.Copy(file, bad, overwrite: true); } catch (IOException) { /* keep going with defaults */ }
+            try { File.Copy(file, bad, overwrite: true); }
+            catch (Exception copyEx) when (copyEx is IOException or UnauthorizedAccessException) { /* keep going with defaults */ }
             log.Warning($"Settings file {file} is not valid JSON ({ex.Message}). Using defaults; the old file was copied to {bad}. " +
                         "Fix or delete it to stop this warning.");
             return null;
@@ -106,7 +123,8 @@ public sealed class SettingsStore(AppPaths paths, Logger log)
         var s = new AppSettings { SaveFolder = string.IsNullOrWhiteSpace(old.DefaultSaveLocation) ? null : old.DefaultSaveLocation };
 
         string backup = Path.Combine(Path.GetDirectoryName(file) ?? ".", "settings.v1.json");
-        try { File.Copy(file, backup, overwrite: false); } catch (IOException) { /* a backup already exists */ }
+        try { File.Copy(file, backup, overwrite: false); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { /* a backup exists, or the folder is read-only */ }
         log.Info($"Imported SquareSnap 1.0 settings from {file} (save folder: {s.SaveFolder ?? "default"}); the 1.0 file is kept as {backup}.");
         Save(s);
         return s;

@@ -1,6 +1,6 @@
 # SquareSnap: instructions for AI assistants
 
-These steps let an assistant install SquareSnap and use it for a person. Every command below was run once before the 2.0.0 release; the results are noted where a command needs a desktop.
+These steps let an assistant install SquareSnap and use it for a person. Every command below was run once before the 2.0.0 release and checked again for 2.0.1; the results are noted where a command needs a desktop.
 
 ## 1. What it is for
 
@@ -21,7 +21,7 @@ Windows, any one of these:
 
 ```powershell
 # a) The release zip, extracted to a folder of your choice
-Invoke-WebRequest https://github.com/taosecurity/SquareSnap/releases/download/v2.0.0/SquareSnap-2.0.0-win-x64.zip -OutFile SquareSnap.zip
+Invoke-WebRequest https://github.com/taosecurity/SquareSnap/releases/download/v2.0.1/SquareSnap-2.0.1-win-x64.zip -OutFile SquareSnap.zip
 Expand-Archive SquareSnap.zip -DestinationPath "$env:LOCALAPPDATA\SquareSnap-app"
 # b) WinGet, once the package is accepted (adds the "squaresnap" command to PATH)
 winget install taosecurity.SquareSnap
@@ -32,9 +32,9 @@ winget install --id 9P7RXW6FNH5D --source msstore
 Linux:
 
 ```sh
-curl -LO https://github.com/taosecurity/SquareSnap/releases/download/v2.0.0/SquareSnap-2.0.0-linux-x64.tar.gz
-tar -xzf SquareSnap-2.0.0-linux-x64.tar.gz
-cd SquareSnap-2.0.0-linux-x64
+curl -LO https://github.com/taosecurity/SquareSnap/releases/download/v2.0.1/SquareSnap-2.0.1-linux-x64.tar.gz
+tar -xzf SquareSnap-2.0.1-linux-x64.tar.gz
+cd SquareSnap-2.0.1-linux-x64
 ./install.sh            # optional: copies squaresnap to ~/.local/bin and adds a menu entry (no sudo); needed for the Plasma hotkey
 ```
 
@@ -43,11 +43,11 @@ On Windows, call the zip's terminal helper as `SquareSnap` (in PowerShell, `.\Sq
 ## 4. Prove the install works
 
 ```powershell
-& "$env:LOCALAPPDATA\SquareSnap-app\SquareSnap.com" --version     # Windows zip: prints "SquareSnap 2.0.0", exit 0
+& "$env:LOCALAPPDATA\SquareSnap-app\SquareSnap.com" --version     # Windows zip: prints "SquareSnap 2.0.1", exit 0
 ```
 
 ```sh
-./squaresnap --version                                              # Linux: prints "SquareSnap 2.0.0", exit 0
+./squaresnap --version                                              # Linux: prints "SquareSnap 2.0.1", exit 0
 ```
 
 ## 5. Common tasks
@@ -73,7 +73,7 @@ Each capture option overrides the saved setting for that run only. `--size` take
 
 - Input: the screen (a dragged square, or `--region X,Y,SIZE,SIZE` in physical screen pixels; the two sizes must be equal).
 - `capture` always saves a file and prints its full path on standard output (under WSL, as a `/mnt/...` path); it also copies the image to the clipboard unless `--no-clipboard` (or the saved setting) says not to. Errors go to standard error, start with `SquareSnap:`, and say what to do. If saving works but copying fails, the exit code is still 0 and a `SquareSnap:` line on standard error says why.
-- Files are written with a new name each time (the `{n:000}` counter restarts each day); SquareSnap never overwrites an existing file.
+- Files are written with a new name each time (the `{n:000}` counter restarts each day when the template has `{date}`, as the default does); SquareSnap never overwrites an existing file.
 - SquareSnap writes only its captures, its settings file and its log (below).
 
 ## 7. Exit codes

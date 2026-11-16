@@ -191,13 +191,27 @@ public sealed class LoggerTests : IDisposable
     }
 
     [Fact]
-    public void LargeLogIsTrimmed()
+    public void LargeLogIsMovedAside()
     {
         string file = Path.Combine(_dir, "big.log");
         File.WriteAllText(file, string.Concat(Enumerable.Repeat("0123456789012345678901234567890123456789\n", 40_000)));
         Logger.TrimIfLarge(file);
-        long size = new FileInfo(file).Length;
-        Assert.True(size < Logger.MaxBytes, $"size {size}");
-        Assert.StartsWith("(older lines removed)", File.ReadAllText(file));
+        Assert.False(File.Exists(file));
+        Assert.True(File.Exists(file + ".1"));
+    }
+
+    [Fact]
+    public void LargeLogHeldOpenByAnotherRunIsMovedAndTheOtherRunKeepsWriting()
+    {
+        // 2.0.1: rewriting in place broke a second SquareSnap holding the log (no log on Windows, NUL bytes on Linux).
+        string file = Path.Combine(_dir, "shared.log");
+        File.WriteAllText(file, string.Concat(Enumerable.Repeat("0123456789012345678901234567890123456789\n", 40_000)));
+        using (var other = new FileStream(file, FileMode.Append, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete))
+        {
+            Logger.TrimIfLarge(file);
+            other.Write("still writing\n"u8);
+        }
+        Assert.False(File.Exists(file));
+        Assert.EndsWith("still writing\n", File.ReadAllText(file + ".1"));
     }
 }

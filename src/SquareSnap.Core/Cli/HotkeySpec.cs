@@ -87,7 +87,7 @@ public sealed record HotkeySpec(HotkeyModifiers Modifiers, string Key)
         }
 
         if (key == null) { error = $"Hotkey '{text}' has no key; add one, as in Ctrl+Alt+S."; return false; }
-        if ((mods & (HotkeyModifiers.Ctrl | HotkeyModifiers.Alt | HotkeyModifiers.Win)) == 0 && !key.StartsWith('F') && key != "PrintScreen")
+        if ((mods & (HotkeyModifiers.Ctrl | HotkeyModifiers.Alt | HotkeyModifiers.Win)) == 0 && !IsFunctionKey(key) && key != "PrintScreen")
         {
             error = $"Hotkey '{text}' needs Ctrl, Alt or Win, or it would fire while you type.";
             return false;
@@ -95,6 +95,10 @@ public sealed record HotkeySpec(HotkeyModifiers Modifiers, string Key)
         spec = new HotkeySpec(mods, key);
         return true;
     }
+
+    /// <summary>F1-F24 (the letter F alone is not a function key: Shift+F would fire on every capital F).</summary>
+    private static bool IsFunctionKey(string key) =>
+        key.Length >= 2 && key[0] == 'F' && int.TryParse(key.AsSpan(1), out int n) && n is >= 1 and <= 24;
 
     private static string? NormalizeKey(string k)
     {

@@ -60,10 +60,13 @@ internal static class WslBridgeRunner
     /// <summary>wslpath knows the real mounts; the tested rules in <see cref="Wsl"/> are the fallback.</summary>
     private static string ToWindowsPath(string linuxPath, Logger log) =>
         RunWslPath("-w", linuxPath, log) ?? Wsl.ToWindowsPath(linuxPath, Environment.GetEnvironmentVariable("WSL_DISTRO_NAME") ?? "",
-            Wsl.MountRootFromConf(ReadOrNull("/etc/wsl.conf")));
+            MountRoot.Value);
 
     private static string ToLinuxPath(string windowsPath, Logger log) =>
-        RunWslPath("-u", windowsPath, log) ?? Wsl.ToLinuxPath(windowsPath, Wsl.MountRootFromConf(ReadOrNull("/etc/wsl.conf")));
+        RunWslPath("-u", windowsPath, log) ?? Wsl.ToLinuxPath(windowsPath, MountRoot.Value);
+
+    /// <summary>/etc/wsl.conf's drive mount root, read once per run (it was read again for every path).</summary>
+    private static readonly Lazy<string> MountRoot = new(() => Wsl.MountRootFromConf(ReadOrNull("/etc/wsl.conf")));
 
     private static string? RunWslPath(string flag, string path, Logger log)
     {
