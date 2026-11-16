@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 (unreleased)
+## 2.0.0 (2026-11-16)
 
 A rewrite of SquareSnap on .NET 10 and Avalonia, for Windows and Linux. It replaces SquareSnap 1.0 (Windows) and BejSnap 1.0 (Linux), and takes over their save folder the first time it starts.
 
