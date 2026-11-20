@@ -23,9 +23,9 @@ Windows, any one of these:
 # a) The release zip, extracted to a folder of your choice
 Invoke-WebRequest https://github.com/taosecurity/SquareSnap/releases/download/v2.0.2/SquareSnap-2.0.2-win-x64.zip -OutFile SquareSnap.zip
 Expand-Archive SquareSnap.zip -DestinationPath "$env:LOCALAPPDATA\SquareSnap-app"
-# b) WinGet, once the package is accepted (adds the "squaresnap" command to PATH)
+# b) WinGet: the taosecurity.SquareSnap package is still waiting for review (checked 2026-11-20); once accepted it adds the "squaresnap" command to PATH
 winget install taosecurity.SquareSnap
-# c) The Microsoft Store version, once certified
+# c) The Microsoft Store version (2.0.2, live in the Store since 2026-11-17)
 winget install --id 9P7RXW6FNH5D --source msstore
 ```
 
@@ -81,7 +81,7 @@ Each capture option overrides the saved setting for that run only. `--size` take
 | Code | Meaning |
 |---|---|
 | 0 | Saved or copied |
-| 1 | Cancelled (Esc or right-click in the overlay) |
+| 1 | Canceled (Esc or right-click in the overlay) |
 | 2 | Bad arguments (the message names the option), or `--last` before any square was captured |
 | 3 | The capture failed (for example, no desktop session; under WSL, no Windows `SquareSnap.exe` found) |
 | 4 | The file couldn't be saved |

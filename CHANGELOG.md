@@ -2,7 +2,28 @@
 
 ## 2.0.2 (2026-11-16)
 
-- Alt+F4 on the capture overlay cancels the capture, as Escape does. Before, the overlay ignored it.
+### What's new
+
+SquareSnap 2.0.2 is a small fix release. Alt+F4 on the capture overlay now cancels the capture, as Esc does. Everything else works as in 2.0.1.
+
+### Example
+
+Press Ctrl+Alt+S (or click **Capture square**), drag a square and let go. The picture is on the clipboard, ready to paste with Ctrl+V. Press Alt+F4 or Esc instead to cancel. From a terminal:
+
+    > .\SquareSnap --version
+    SquareSnap 2.0.2
+
+### Fixes
+
+- Alt+F4 on the capture overlay cancels the capture, as Esc does. Before, the overlay ignored it.
+- 2.0.1's fixes (from a code review) are listed in its release notes.
+
+### Download
+
+- Windows (x64): `SquareSnap-2.0.2-win-x64.zip`. Extract it anywhere and run `SquareSnap.exe`. The `-winget.zip` is the same build laid out for WinGet.
+- Linux: `SquareSnap-2.0.2-linux-x64.tar.gz` or `-linux-arm64.tar.gz`, then run `./squaresnap`.
+
+To check a download, run `sha256sum -c SHA256SUMS --ignore-missing` (Linux) or `Get-FileHash <file>` (Windows, then compare with SHA256SUMS), and `gh attestation verify <file> -R taosecurity/SquareSnap`. The Windows exe isn't code-signed, but the Microsoft Store version is.
 
 ## 2.0.1 (2026-11-16)
 

@@ -1,10 +1,12 @@
 # SquareSnap
 
-**Square (1:1) screenshots on Windows and Linux.** Drag on the screen and SquareSnap keeps the selection perfectly square, then copies it to the clipboard or saves it at an exact size such as 512 x 512 or 1080 x 1080. That's handy for profile pictures, thumbnails, icons, social posts and image tools that want square input.
+SquareSnap takes square (1:1) screenshots on Windows and Linux. You drag on the screen, SquareSnap keeps the selection perfectly square, and then it copies the picture to the clipboard or saves it at an exact size such as 512 x 512 or 1080 x 1080. That's handy for profile pictures, thumbnails, icons, social posts and image tools that want square input.
 
-It works from a window, a global hotkey (Ctrl+Alt+S), the tray, or a terminal command for scripts. On Windows it captures every monitor at its real resolution; on Linux it is made for KDE Plasma on Wayland; under WSL it captures the Windows desktop.
+It works from a window, a global hotkey (Ctrl+Alt+S), the tray, or a terminal command for scripts. On Windows it captures every monitor at its real resolution. On Linux it is made for KDE Plasma on Wayland, and under WSL it captures the Windows desktop.
 
-For AI assistants: see [AGENTS.md](AGENTS.md).
+What's new: see the [latest release](https://github.com/taosecurity/SquareSnap/releases/latest) and [CHANGELOG.md](CHANGELOG.md).
+
+For AI assistants: step-by-step instructions are in [AGENTS.md](AGENTS.md).
 
 ## Try it
 
@@ -27,6 +29,32 @@ cd SquareSnap-2.0.2-linux-x64
 
 Nothing else needs installing: each download carries its own .NET runtime.
 
+## Example
+
+Here is a capture from start to finish:
+
+1. Press **Ctrl+Alt+S** anywhere, or click **Capture square** in the SquareSnap window. The screen freezes and a magnifier follows the mouse.
+2. Drag across the part of the screen you want. The selection stays square however you move the mouse. Right-click or press Esc to cancel.
+3. Let go of the mouse button. The picture is now on the clipboard, so press **Ctrl+V** in a chat, a document or an image editor to paste it.
+4. To keep a file as well, press **Ctrl+S** in the SquareSnap window. The picture is saved to `Pictures\SquareSnap` as `SquareCap-YYYYMMDD-001.png`, and a banner shows where it went, with an **Open folder** button.
+
+From a terminal, the same thing is one command. This is the real output of the 2.0.2 Windows zip, run in its folder:
+
+    > .\SquareSnap --version
+    SquareSnap 2.0.2
+
+    > .\SquareSnap --help
+    SquareSnap: take square (1:1) screenshots.
+
+    Usage:
+      squaresnap                         open the window
+      squaresnap capture [options]       drag a square, then save and/or copy it, and exit
+      squaresnap paths                   show where settings, the log and captures go
+      squaresnap --version | --help
+    ...
+
+`.\SquareSnap capture --size 512 --out $HOME\Desktop` lets you drag a square, saves it at 512 x 512 on your desktop, and prints the full path of the saved file, so a script can pick it up.
+
 ## What it does
 
 - **Always square.** The selection is held at 1:1 while you drag. A magnifier shows the exact pixel under the mouse. Right-click or Esc cancels.
@@ -48,8 +76,8 @@ Shortcuts in the window: Ctrl+N capture, Ctrl+R repeat last, Ctrl+S save, Ctrl+S
 | Where | How | Notes |
 |---|---|---|
 | Windows zip | Extract `SquareSnap-<version>-win-x64.zip` anywhere and run `SquareSnap.exe`. | Windows 10 (2004) or later, x64. The zip isn't signed, so the first start may show "Windows protected your PC": click **More info**, then **Run anyway**. |
-| Microsoft Store | [SquareSnap in the Microsoft Store](https://apps.microsoft.com/detail/9P7RXW6FNH5D) (once Microsoft has certified it). | Signed by Microsoft; updates itself. Adds the `squaresnap` command to every terminal. |
-| WinGet | `winget install taosecurity.SquareSnap` (once the package is accepted), or `winget install --id 9P7RXW6FNH5D --source msstore` for the Store version. | The WinGet package uses `SquareSnap-<version>-win-x64-winget.zip` and adds the `squaresnap` command. |
+| Microsoft Store | [SquareSnap in the Microsoft Store](https://apps.microsoft.com/detail/9P7RXW6FNH5D). Version 2.0.2 has been live there since 2026-11-17. | Signed by Microsoft; updates itself. Adds the `squaresnap` command to every terminal. |
+| WinGet | `winget install --id 9P7RXW6FNH5D --source msstore` installs the Store version. The `taosecurity.SquareSnap` package is still waiting for review by the WinGet team (checked 2026-11-20), so `winget install taosecurity.SquareSnap` works only after it is accepted. | The WinGet package uses `SquareSnap-<version>-win-x64-winget.zip` and adds the `squaresnap` command. |
 | Linux | Unpack `SquareSnap-<version>-linux-x64.tar.gz` (or `-linux-arm64`) and run `./squaresnap`. `./install.sh` puts `squaresnap` in `~/.local/bin` and adds the menu entry and icons under `~/.local/share` (no sudo); `./install.sh --uninstall` removes them. | Needs a desktop session. Made for KDE Plasma 6 on Wayland (tested on Debian 13 and CachyOS). GNOME and X11 work through fallbacks but are less tested; the arm64 build is untested. |
 
 Every release lists SHA-256 hashes in `SHA256SUMS` and carries a GitHub build attestation. To check a download:
@@ -89,7 +117,7 @@ Exit codes:
 | Code | Meaning |
 |---|---|
 | 0 | Saved or copied |
-| 1 | Cancelled (Esc or right-click) |
+| 1 | Canceled (Esc or right-click) |
 | 2 | Bad arguments (the message names the option) |
 | 3 | The capture failed |
 | 4 | The file couldn't be saved |
@@ -109,7 +137,11 @@ On Fedora: `fontconfig libX11 libICE libSM libXrandr libXi libXcursor libxkbcomm
 
 **Monitors on Wayland.** SquareSnap draws native Wayland windows (`SQUARESNAP_X11=1` uses X11 instead). Wayland doesn't let programs place their windows, so the capture overlay appears on one monitor: the one the desktop picks, normally the one with the mouse. To capture another monitor, move the mouse there and start the capture again. With `SQUARESNAP_X11=1` the overlay covers every monitor.
 
-**Hotkey on KDE Plasma** (more in `KDE-SHORTCUTS.txt` in the Linux download). Run `./install.sh` first: Plasma gives hotkeys only to installed apps. Then start SquareSnap from the app menu. It asks Plasma for Ctrl+Alt+S through the global shortcuts portal, and Plasma shows a dialog: accept it without pressing a key. To change the keys, open System Settings > Keyboard > Shortcuts > SquareSnap. You can also bind any key to the command `squaresnap capture` there (Add New > Command or Script).
+**Hotkey on KDE Plasma** (more in `KDE-SHORTCUTS.txt` in the Linux download). Run `./install.sh` first, because Plasma gives hotkeys only to installed apps. Then start SquareSnap from the app menu.
+
+SquareSnap asks Plasma for Ctrl+Alt+S through the global shortcuts portal, and Plasma shows a dialog: accept it without pressing a key.
+
+To change the keys, open System Settings > Keyboard > Shortcuts > SquareSnap. You can also bind any key to the command `squaresnap capture` there (Add New > Command or Script).
 
 **Clipboard.** `squaresnap capture` copies with `wl-copy` (from wl-clipboard, or `xclip` on X11), so the picture stays on the clipboard after SquareSnap exits. Without either it still saves the file and says what to install.
 
@@ -117,7 +149,9 @@ On Fedora: `fontconfig libX11 libICE libSM libXrandr libXi libXcursor libxkbcomm
 
 ## WSL
 
-In a WSL shell, `squaresnap` runs the Windows `SquareSnap.exe`, because Linux under WSL can only see WSLg's own windows, not the Windows desktop. `squaresnap capture --out /mnt/d/Shots` saves through Windows and prints the file as a `/mnt/...` path. WSLg's Linux windows are on the Windows desktop, so they're captured too. Paths are translated with `wslpath`, and the arguments go to Windows as a list, never through a shell. The bridge needs no extra Linux packages.
+In a WSL shell, `squaresnap` runs the Windows `SquareSnap.exe`, because Linux under WSL can only see WSLg's own windows, not the Windows desktop. WSLg's Linux windows are on the Windows desktop, so they're captured too.
+
+`squaresnap capture --out /mnt/d/Shots` saves through Windows and prints the file as a `/mnt/...` path. Paths are translated with `wslpath`, and the arguments go to Windows as a list, never through a shell. The bridge needs no extra Linux packages.
 
 SquareSnap looks for the Windows `SquareSnap.exe` in `$SQUARESNAP_WINDOWS_EXE` first, then next to the Linux `squaresnap`, then in the Windows folders on PATH. For example, in `~/.bashrc`:
 
@@ -170,7 +204,7 @@ What SquareSnap promises and how to report a problem privately: [SECURITY.md](SE
 
 ## License
 
-MIT; see [LICENSE](LICENSE).
+SquareSnap is released under the MIT License; see [LICENSE](LICENSE).
 
 ## Credits
 
